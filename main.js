@@ -32,11 +32,13 @@ async function fetchCSVToObject(url) {
     }
 }
 
-// דוגמה לשימוש
+let dataFromJSON, sortInfoJSON, dataFromCSV;
+
 (async () => {
-    const url = "./data_cars.csv"; // החלף את הכתובת בכתובת שלך
+    const url = "./data_cars.csv";
     try {
         const data = await fetchCSVToObject(url);
+	dataFromJSON = data;
         console.log(data);
     } catch (error) {
         console.error("Failed to process CSV:", error);
@@ -44,14 +46,13 @@ async function fetchCSVToObject(url) {
 })();
 
 
-let dataFromJSON, sortInfoJSON;
 
 
 
 fetch("./data.json")
   .then((response) => response.json())
   .then((data) => {
-    dataFromJSON = data;
+    dataFromJSON2 = data;
     start();
   });
 fetch("./sort.json")
