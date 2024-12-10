@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>ידידים - מידע טכני - כלי רכב</title>
+</head>
+<body dir="rtl">
+    <div class="header"></div>
+    <div class="main">
+        <div class="container-selects-options">
+            <select name="select-manufactor" class="select-manufactor selects-options" onchange="optionsFields[0].value=this.value; setSelectOptions(1)">
+                <option value="" disabled selected></option>
+            </select>
+            <select name="select-model" class="select-model selects-options" onchange="optionsFields[1].value=this.value; setSelectOptions(2)">
+                <option value="" disabled selected></option>
+            </select>
+            <select name="select-year" class="select-year selects-options" onchange="optionsFields[2].value=this.value; fillDetails()">
+                <option value="" disabled selected></option>
+            </select>
+        </div>
+        <div class="details-info">
+        </div>
+    </div>
+    
+    <script src="main.js"></script>
+</body>
+</html>
