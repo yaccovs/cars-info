@@ -1,4 +1,53 @@
+async function fetchCSVToObject(url) {
+    try {
+        // הורדת תוכן ה-CSV
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch CSV: ${response.statusText}`);
+        }
+
+        // קריאת הטקסט של הקובץ
+        const csvText = await response.text();
+
+        // המרת ה-CSV לשורות
+        const rows = csvText.split("\n").map(row => row.trim()).filter(row => row);
+
+        // הפרדת כותרות
+        const headers = rows.shift().split(",").map(header => header.trim());
+
+        // המרת שורות לאובייקטים
+        const result = rows.map(row => {
+            const values = row.split(",").map(value => value.trim());
+            const obj = {};
+            headers.forEach((header, index) => {
+                obj[header] = values[index] || null; // התמודדות עם ערכים חסרים
+            });
+            return obj;
+        });
+
+        return result;
+    } catch (error) {
+        console.error("Error fetching or parsing CSV:", error);
+        throw error;
+    }
+}
+
+// דוגמה לשימוש
+(async () => {
+    const url = "./data-cars.csv"; // החלף את הכתובת בכתובת שלך
+    try {
+        const data = await fetchCSVToObject(url);
+        console.log(data);
+    } catch (error) {
+        console.error("Failed to process CSV:", error);
+    }
+})();
+
+
 let dataFromJSON, sortInfoJSON;
+
+
+
 fetch("./data.json")
   .then((response) => response.json())
   .then((data) => {
