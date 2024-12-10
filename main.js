@@ -34,7 +34,7 @@ async function fetchCSVToObject(url) {
 
 // דוגמה לשימוש
 (async () => {
-    const url = "./data-cars.csv"; // החלף את הכתובת בכתובת שלך
+    const url = "./data_cars.csv"; // החלף את הכתובת בכתובת שלך
     try {
         const data = await fetchCSVToObject(url);
         console.log(data);
