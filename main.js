@@ -54,7 +54,7 @@ async function renderMarkdown() {
 }
 
 let dataFromJSON, sortInfoJSON, dataFromCSV;
-const markdownHeader = './README.md';
+const markdownFile = './README.md';
 renderMarkdown();
 
 (async () => {
