@@ -9,9 +9,6 @@
       <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body dir="rtl">
-{% for repository in site.github.public_repositories %}
-  * [{{ repository.name }}]({{ repository.html_url }})
-{% endfor %}
     <div class="header"></div>
     <div class="main">
         <div class="container-selects-options">
@@ -28,7 +25,6 @@
         <div class="details-info">
         </div>
     </div>
-    <p>Last updated: {{ site.time | date: "%B %d, %Y" }}</p>
     <script src="main.js"></script>
     
 </body>
