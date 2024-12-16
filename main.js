@@ -69,22 +69,6 @@ renderMarkdown();
     }
 })();
 
-(async () => {
-    const url = "./header.md";
-    try {
-        const data = await fetchCSVToObject(url);
-	dataFromJSON = data;
-        console.log(data);
-	    start();
-    } catch (error) {
-        console.error("Failed to process CSV:", error);
-    }
-})();
-
-
-
-
-
 fetch("./data.json")
   .then((response) => response.json())
   .then((data) => {
