@@ -44,7 +44,7 @@ async function renderMarkdown() {
 	const markdown = await response.text();
 	
 	// המרת Markdown ל-HTML באמצעות marked.js
-	const html = marked(markdown);
+	const html = marked.marked(markdown);
 	
 	// הצגת ה-HTML בתוך העמוד
 	document.querySelector('header').innerHTML = html;
