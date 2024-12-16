@@ -32,10 +32,45 @@ async function fetchCSVToObject(url) {
     }
 }
 
+async function renderMarkdown() {
+	try {
+	// טען את קובץ ה-MD
+	const response = await fetch(markdownFile);
+	if (!response.ok) {
+	  throw new Error('Failed to fetch the Markdown file');
+	}
+	
+	// קרא את תוכן הקובץ כטקסט
+	const markdown = await response.text();
+	
+	// המרת Markdown ל-HTML באמצעות marked.js
+	const html = marked(markdown);
+	
+	// הצגת ה-HTML בתוך העמוד
+	document.querySelector('header').innerHTML = html;
+	} catch (error) {
+	console.error('Error:', error);
+	}
+}
+
 let dataFromJSON, sortInfoJSON, dataFromCSV;
+const markdownHeader = './README.md';
+renderMarkdown();
 
 (async () => {
     const url = "./data_cars.csv";
+    try {
+        const data = await fetchCSVToObject(url);
+	dataFromJSON = data;
+        console.log(data);
+	    start();
+    } catch (error) {
+        console.error("Failed to process CSV:", error);
+    }
+})();
+
+(async () => {
+    const url = "./header.md";
     try {
         const data = await fetchCSVToObject(url);
 	dataFromJSON = data;
