@@ -47,7 +47,7 @@ async function renderMarkdown() {
 	const html = marked.marked(markdown);
 	
 	// הצגת ה-HTML בתוך העמוד
-	document.querySelector('header').innerHTML = html;
+	document.querySelector('.header').innerHTML = html;
 	} catch (error) {
 	console.error('Error:', error);
 	}
