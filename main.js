@@ -58,7 +58,8 @@ const markdownFile = './README.md';
 renderMarkdown();
 
 (async () => {
-  const url = "./data_cars.csv";
+  const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSXNnGEJ2aU0SK1e-AGNsT4z6TqeQQkg_d6d4N1ROfyJ0JTHuoLjNZ4UVqaAKj999A8ymOGoCczDvx3/pub?gid=1587105429&single=true&output=csv";
+  // const url = "./data_cars.csv";
   try {
     const data = await fetchCSVToObject(url);
     dataFromJSON = data;
