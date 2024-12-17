@@ -249,7 +249,9 @@ const youtubeHtml = `<div class="youtube-container">
 </div>`;
 
 
-function getDataforNumber() {
+function getDataForNumber(event) {
+  event.preventDefault();
+
   const keys = {
     mispar_rechev: "מספר רכב",
     tozeret_nm: "יצרן",
@@ -259,7 +261,7 @@ function getDataforNumber() {
     sug_delek_nm: "סוג דלק",
   }
   const container = document.querySelector(".number-info");
-  const mispar_rechev = document.querySelector("input-checknumber").value;
+  const mispar_rechev = document.querySelector("#input-checknumber").value;
   const urlGovAPI = `https://data.gov.il/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&filters={%22mispar_rechev%22:%22${mispar_rechev}%22}`;
 
   fetch(urlGovAPI)
