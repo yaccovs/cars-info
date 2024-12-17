@@ -262,14 +262,22 @@ function getDataForNumber(event) {
   }
   const container = document.querySelector(".number-info");
   const mispar_rechev = document.querySelector("#input-checknumber").value;
-  const urlGovAPI = `https://data.gov.il/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&filters={%22mispar_rechev%22:%22${mispar_rechev}%22}`;
-
-  fetch(urlGovAPI)
+  const NumbersAPI = `https://data.gov.il/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&filters={%22mispar_rechev%22:%22${mispar_rechev}%22}`;
+  fetch(NumbersAPI)
     .then(response => response.json())
     .then(data => {
+
       const innerTable = `${Object.keys(keys).map(key => `<tr><td>${keys[key]}</td><td>${data.result.records[0][key]}</td></tr>`).join("\n")}`;
-      container.innerHTML=`<table>${innerTable}</table>`
-      
+      container.innerHTML = `<table>${innerTable}</table>`
+      const dgamimAPI = `https://data.gov.il/api/3/action/datastore_search?resource_id=d00812f4-58c5-4ce8-b16c-ac13ae52f9d8&filters={%22tozeret_nm%22:%22${data.result.records[0].tozeret_nm}%22}`;
+      fetch(dgamimAPI)
+        .then(response => response.json())
+        .then(data => {
+          const selectManuf=document.querySelector(".select-manufactor");
+          selectManuf.value=data.result.records[0].tozar;
+          selectManuf.onchange();
+
+        })
     })
     .catch(error => {
       console.error('Error:', error);
