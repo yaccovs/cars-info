@@ -1,56 +1,56 @@
 async function fetchCSVToObject(url) {
-    try {
-        // הורדת תוכן ה-CSV
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch CSV: ${response.statusText}`);
-        }
-
-        // קריאת הטקסט של הקובץ
-        const csvText = await response.text();
-
-        // המרת ה-CSV לשורות
-        const rows = csvText.split("\n").map(row => row.trim()).filter(row => row);
-
-        // הפרדת כותרות
-        const headers = rows.shift().split(",").map(header => header.trim());
-
-        // המרת שורות לאובייקטים
-        const result = rows.map(row => {
-            const values = row.split(",").map(value => value.trim());
-            const obj = {};
-            headers.forEach((header, index) => {
-                obj[header] = values[index] || null; // התמודדות עם ערכים חסרים
-            });
-            return obj;
-        });
-
-        return result;
-    } catch (error) {
-        console.error("Error fetching or parsing CSV:", error);
-        throw error;
+  try {
+    // הורדת תוכן ה-CSV
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch CSV: ${response.statusText}`);
     }
+
+    // קריאת הטקסט של הקובץ
+    const csvText = await response.text();
+
+    // המרת ה-CSV לשורות
+    const rows = csvText.split("\n").map(row => row.trim()).filter(row => row);
+
+    // הפרדת כותרות
+    const headers = rows.shift().split(",").map(header => header.trim());
+
+    // המרת שורות לאובייקטים
+    const result = rows.map(row => {
+      const values = row.split(",").map(value => value.trim());
+      const obj = {};
+      headers.forEach((header, index) => {
+        obj[header] = values[index] || null; // התמודדות עם ערכים חסרים
+      });
+      return obj;
+    });
+
+    return result;
+  } catch (error) {
+    console.error("Error fetching or parsing CSV:", error);
+    throw error;
+  }
 }
 
 async function renderMarkdown() {
-	try {
-	// טען את קובץ ה-MD
-	const response = await fetch(markdownFile);
-	if (!response.ok) {
-	  throw new Error('Failed to fetch the Markdown file');
-	}
-	
-	// קרא את תוכן הקובץ כטקסט
-	const markdown = await response.text();
-	
-	// המרת Markdown ל-HTML באמצעות marked.js
-	const html = marked.marked(markdown);
-	
-	// הצגת ה-HTML בתוך העמוד
-	document.querySelector('.header').innerHTML = html;
-	} catch (error) {
-	console.error('Error:', error);
-	}
+  try {
+    // טען את קובץ ה-MD
+    const response = await fetch(markdownFile);
+    if (!response.ok) {
+      throw new Error('Failed to fetch the Markdown file');
+    }
+
+    // קרא את תוכן הקובץ כטקסט
+    const markdown = await response.text();
+
+    // המרת Markdown ל-HTML באמצעות marked.js
+    const html = marked.marked(markdown);
+
+    // הצגת ה-HTML בתוך העמוד
+    document.querySelector('.header').innerHTML = html;
+  } catch (error) {
+    console.error('Error:', error);
+  }
 }
 
 let dataFromJSON, sortInfoJSON, dataFromCSV;
@@ -58,23 +58,18 @@ const markdownFile = './README.md';
 renderMarkdown();
 
 (async () => {
-    const url = "./data_cars.csv";
-    try {
-        const data = await fetchCSVToObject(url);
-	dataFromJSON = data;
-        console.log(data);
-	    start();
-    } catch (error) {
-        console.error("Failed to process CSV:", error);
-    }
+  const url = "./data_cars.csv";
+  try {
+    const data = await fetchCSVToObject(url);
+    dataFromJSON = data;
+    console.log(data);
+    start();
+  } catch (error) {
+    console.error("Failed to process CSV:", error);
+  }
 })();
 
-fetch("./data.json")
-  .then((response) => response.json())
-  .then((data) => {
-    dataFromJSON2 = data;
-    // start();
-  });
+
 fetch("./sort.json")
   .then((response) => response.json())
   .then((data) => {
@@ -251,3 +246,24 @@ const youtubeHtml = `<div class="youtube-container">
     >
     </iframe>
 </div>`;
+
+
+
+const data = {
+  resource_id: '053cea08-09bc-40ec-8f7a-156f0677aff3', // ה-resource id
+  limit: 1, // מספר התוצאות הרצוי
+  mispar_rechev: '123456' // חיפוש לפי מספר רכב
+};
+
+const queryString = new URLSearchParams(data).toString();
+const urlGovAPI = `https://data.gov.il/api/3/action/datastore_search?${queryString}`;
+
+fetch(urlGovAPI)
+  .then(response => response.json())
+  .then(data => {
+    alert('Total results found: ' + data.result.total);
+    console.dir(data)
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
