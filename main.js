@@ -273,13 +273,15 @@ function getDataForNumber(event) {
       fetch(dgamimAPI)
         .then(response => response.json())
         .then(data => {
-          const selectManuf=document.querySelector(".select-manufactor");
-          selectManuf.value=data.result.records[0].tozar;
+          const selectManuf = document.querySelector(".select-manufactor");
+          selectManuf.value = data.result.records[0].tozar;
           selectManuf.onchange();
 
         })
     })
     .catch(error => {
+      container.innerHTML = 'מספר לא קיים או תקלה אחרת';
+
       console.error('Error:', error);
     });
 }
