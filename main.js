@@ -252,7 +252,7 @@ const youtubeHtml = `<div class="youtube-container">
 
 const mispar_rechev="1000010";
 
-const queryString = new URLSearchParams(data).toString();
+// const queryString = new URLSearchParams(data).toString();
 const urlGovAPI = `https://data.gov.il/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&filters={%22mispar_rechev%22:%22${mispar_rechev}%22}`;
 
 fetch(urlGovAPI)
