@@ -249,18 +249,28 @@ const youtubeHtml = `<div class="youtube-container">
 </div>`;
 
 
+function getDataforNumber() {
+  const keys = {
+    mispar_rechev: "מספר רכב",
+    tozeret_nm: "יצרן",
+    kinuy_mishari: "כינוי מסחרי (דגם)",
+    shnat_yitzur: "שנת ייצור",
+    tokef_dt: "תוקף רישיון",
+    sug_delek_nm: "סוג דלק",
+  }
+  const container = document.querySelector(".number-info");
+  const mispar_rechev = document.querySelector("input-checknumber");
+  const urlGovAPI = `https://data.gov.il/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&filters={%22mispar_rechev%22:%22${mispar_rechev}%22}`;
 
-const mispar_rechev="1000010";
+  fetch(urlGovAPI)
+    .then(response => response.json())
+    .then(data => {
+      const innerTable = `${Object.keys(keys).map(key => `<tr><td>${keys[key]}</td><td>${data.result.records[0][key]}</td></tr>`).join("\n")}`;
+      container.innerHTML=`<table>${innerTable}</table>`
+      
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+}
 
-// const queryString = new URLSearchParams(data).toString();
-const urlGovAPI = `https://data.gov.il/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&filters={%22mispar_rechev%22:%22${mispar_rechev}%22}`;
-
-fetch(urlGovAPI)
-  .then(response => response.json())
-  .then(data => {
-    alert('Total results found: ' + data.result.total);
-    console.dir(data)
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
