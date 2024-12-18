@@ -7,6 +7,7 @@ html {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
+  padding-bottom: 4em;
 }
 
 .details-info {
@@ -64,4 +65,17 @@ html {
 
 .form-checknumber {
   padding: 3em;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3em; /* גובה הפוטר */
+  background-color: #dbdbdb;
+  color: rgb(0, 0, 0);
+  text-align: center;
+  line-height: 3em; /* מרכז טקסט אנכית */
+  z-index: 1000; /* מבטיח שהוא יישב מעל תוכן אחר */
 }
