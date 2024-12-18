@@ -55,7 +55,7 @@ async function renderMarkdown() {
 
 let dataFromJSON, sortInfoJSON, dataFromCSV;
 const markdownFile = './README.md';
-renderMarkdown();
+// renderMarkdown();
 
 (async () => {
   const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSXNnGEJ2aU0SK1e-AGNsT4z6TqeQQkg_d6d4N1ROfyJ0JTHuoLjNZ4UVqaAKj999A8ymOGoCczDvx3/pub?gid=1587105429&single=true&output=csv";

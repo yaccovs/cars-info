@@ -60,3 +60,8 @@ html {
   aspect-ratio: 16 / 9;
   width: 100%;
 }
+
+
+.form-checknumber {
+  padding: 3em;
+}
