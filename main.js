@@ -205,12 +205,6 @@ async function setSelectOptions(fieldNum) {
   optionsFields[fieldNum].options = [...uniqs].sort();
 
   fillSelect(fieldNum);
-  if (optionsFields[fieldNum].options.length === 1) {
-    const value = optionsFields[fieldNum].options[0];
-    optionsFields[fieldNum].value = value;
-    document.querySelector(`.${optionsFields[fieldNum].field}`).value = value;
-    document.querySelector(`.${optionsFields[fieldNum].field}`).onchange();
-  }
 }
 
 async function fillDetails() {
@@ -322,7 +316,11 @@ function getDataForNumber(event) {
             `<tr><td>${keys[key]}</td><td>${data.result.records[0][key]}</td></tr>`
         )
         .join("\n")}`;
-      container.innerHTML = `<table>${innerTable}</table>`;
+      container.innerHTML = `<table>
+          ${innerTable}
+          <tfoot><tr>
+          <td class="disclaimer-gov" colspan="2">הנתונים נלקחו מ<a href="https://data.gov.il/dataset/private-and-commercial-vehicles">DataGov</a></td>
+          </tr></tfoot>`;
       const dgamimAPI = `https://data.gov.il/api/3/action/datastore_search?resource_id=d00812f4-58c5-4ce8-b16c-ac13ae52f9d8&filters={%22tozeret_nm%22:%22${data.result.records[0].tozeret_nm}%22}`;
       fetch(dgamimAPI)
         .then((response) => response.json())

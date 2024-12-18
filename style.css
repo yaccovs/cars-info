@@ -43,16 +43,14 @@ html {
 }
 
 @media screen and (max-width: 1200px) {
-    .youtube-container {
-        height: 55vw;
-    }
-      
+  .youtube-container {
+    height: 55vw;
+  }
 }
 @media screen and (min-width: 1200px) {
-    .youtube-container {
-        height: 660px;
-      }
-      
+  .youtube-container {
+    height: 660px;
+  }
 }
 .youtube-container iframe {
   /* position: absolute; */
@@ -62,9 +60,8 @@ html {
   width: 100%;
 }
 
-
 .form-checknumber {
-  padding: 3em;
+  padding: 1em;
 }
 
 .footer {
@@ -82,10 +79,8 @@ html {
 }
 
 .contact {
-  font-weight:bolder;
+  font-weight: bolder;
 }
-
-
 
 .spinner {
   width: 50px; /* רוחב העיגול */
@@ -105,3 +100,13 @@ html {
   }
 }
 
+.number-info {
+  display: flex;
+  justify-content: center;
+  margin: 1em;
+}
+
+.disclaimer-gov {
+  font-size: xx-small;
+  text-align: center;
+}
