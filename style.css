@@ -72,10 +72,36 @@ html {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 5em; /* גובה הפוטר */
+  /* height: 7em; גובה הפוטר */
   background-color: #dbdbdb;
   color: rgb(0, 0, 0);
   text-align: center;
   line-height: 1em; /* מרכז טקסט אנכית */
   z-index: 1000; /* מבטיח שהוא יישב מעל תוכן אחר */
+  font-size: x-small;
 }
+
+.contact {
+  font-weight:bolder;
+}
+
+
+
+.spinner {
+  width: 50px; /* רוחב העיגול */
+  height: 50px; /* גובה העיגול */
+  border: 6px solid #f3f3f3; /* צבע הגבול החיצוני */
+  border-top: 6px solid #3498db; /* צבע הקו העליון שיהפוך לעיגול מסתובב */
+  border-radius: 50%; /* הופך את הצורה לעיגול */
+  animation: spin 1s linear infinite; /* הנפשה: שם האנימציה, משך זמן, סגנון ותנועה אינסופית */
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg); /* התחלה */
+  }
+  to {
+    transform: rotate(360deg); /* סיבוב שלם */
+  }
+}
+

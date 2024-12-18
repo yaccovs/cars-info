@@ -10,14 +10,20 @@ async function fetchCSVToObject(url) {
     const csvText = await response.text();
 
     // המרת ה-CSV לשורות
-    const rows = csvText.split("\n").map(row => row.trim()).filter(row => row);
+    const rows = csvText
+      .split("\n")
+      .map((row) => row.trim())
+      .filter((row) => row);
 
     // הפרדת כותרות
-    const headers = rows.shift().split(",").map(header => header.trim());
+    const headers = rows
+      .shift()
+      .split(",")
+      .map((header) => header.trim());
 
     // המרת שורות לאובייקטים
-    const result = rows.map(row => {
-      const values = row.split(",").map(value => value.trim());
+    const result = rows.map((row) => {
+      const values = row.split(",").map((value) => value.trim());
       const obj = {};
       headers.forEach((header, index) => {
         obj[header] = values[index] || null; // התמודדות עם ערכים חסרים
@@ -37,7 +43,7 @@ async function renderMarkdown() {
     // טען את קובץ ה-MD
     const response = await fetch(markdownFile);
     if (!response.ok) {
-      throw new Error('Failed to fetch the Markdown file');
+      throw new Error("Failed to fetch the Markdown file");
     }
 
     // קרא את תוכן הקובץ כטקסט
@@ -47,19 +53,21 @@ async function renderMarkdown() {
     const html = marked.marked(markdown);
 
     // הצגת ה-HTML בתוך העמוד
-    document.querySelector('.header').innerHTML = html;
+    document.querySelector(".header").innerHTML = html;
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
   }
 }
 
 let dataFromJSON, sortInfoJSON, dataFromCSV;
-const markdownFile = './README.md';
+const markdownFile = "./README.md";
 // renderMarkdown();
 
 (async () => {
-  const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSXNnGEJ2aU0SK1e-AGNsT4z6TqeQQkg_d6d4N1ROfyJ0JTHuoLjNZ4UVqaAKj999A8ymOGoCczDvx3/pub?gid=1587105429&single=true&output=csv";
+  const url =
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vSXNnGEJ2aU0SK1e-AGNsT4z6TqeQQkg_d6d4N1ROfyJ0JTHuoLjNZ4UVqaAKj999A8ymOGoCczDvx3/pub?gid=1587105429&single=true&output=csv";
   // const url = "./data_cars.csv";
+  staticData();
   try {
     const data = await fetchCSVToObject(url);
     dataFromJSON = data;
@@ -70,6 +78,29 @@ const markdownFile = './README.md';
   }
 })();
 
+(async () => {
+  const url =
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vSXNnGEJ2aU0SK1e-AGNsT4z6TqeQQkg_d6d4N1ROfyJ0JTHuoLjNZ4UVqaAKj999A8ymOGoCczDvx3/pub?gid=934567918&single=true&output=csv";
+  try {
+    const response = await fetch(url);
+    document.querySelector(".lastChange").textContent =
+      "המידע באתר עודכן לאחרונה ב: " + (await response.text());
+  } catch (error) {
+    console.error("Failed to process CSV:", error);
+  }
+})();
+
+async function staticData() {
+  const url = "./data_cars.csv";
+  try {
+    const data = await fetchCSVToObject(url);
+    dataFromJSON = data;
+    console.log(data);
+    start();
+  } catch (error) {
+    console.error("Failed to process CSV:", error);
+  }
+}
 
 fetch("./sort.json")
   .then((response) => response.json())
@@ -116,11 +147,30 @@ const filterBySelects = (obj) => {
 };
 
 async function start() {
+  const selectManufactor = document.querySelector(".select-manufactor");
+  const prevManufactorValue = selectManufactor.value;
+  const selectModel = document.querySelector(".select-model");
+  const prevModelValue = selectModel.value;
+  const selectYear = document.querySelector(".select-year");
+  const prevYearValue = selectYear.value;
+
   const uniqs = new Set();
   dataFromJSON.forEach((obj) => uniqs.add(obj[optionsFields[0].fieldKeyJSON]));
   optionsFields[0].options = [...uniqs].sort();
 
   fillSelect(0);
+  if (prevManufactorValue !== "") {
+    selectManufactor.value = prevManufactorValue;
+    selectManufactor.onchange();
+    if (prevModelValue !== "") {
+      selectModel.value = prevModelValue;
+      selectModel.onchange();
+      if (prevYearValue !== "") {
+        selectYear.value = prevYearValue;
+        selectYear.onchange();
+      }
+    }
+  }
 }
 
 function fillSelect(fieldNum) {
@@ -248,7 +298,6 @@ const youtubeHtml = `<div class="youtube-container">
     </iframe>
 </div>`;
 
-
 function getDataForNumber(event) {
   event.preventDefault();
 
@@ -259,30 +308,33 @@ function getDataForNumber(event) {
     shnat_yitzur: "שנת ייצור",
     tokef_dt: "תוקף רישיון",
     sug_delek_nm: "סוג דלק",
-  }
+  };
   const container = document.querySelector(".number-info");
+  container.innerHTML = '<div class="spinner"></div>';
   const mispar_rechev = document.querySelector("#input-checknumber").value;
   const NumbersAPI = `https://data.gov.il/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&filters={%22mispar_rechev%22:%22${mispar_rechev}%22}`;
   fetch(NumbersAPI)
-    .then(response => response.json())
-    .then(data => {
-
-      const innerTable = `${Object.keys(keys).map(key => `<tr><td>${keys[key]}</td><td>${data.result.records[0][key]}</td></tr>`).join("\n")}`;
-      container.innerHTML = `<table>${innerTable}</table>`
+    .then((response) => response.json())
+    .then((data) => {
+      const innerTable = `${Object.keys(keys)
+        .map(
+          (key) =>
+            `<tr><td>${keys[key]}</td><td>${data.result.records[0][key]}</td></tr>`
+        )
+        .join("\n")}`;
+      container.innerHTML = `<table>${innerTable}</table>`;
       const dgamimAPI = `https://data.gov.il/api/3/action/datastore_search?resource_id=d00812f4-58c5-4ce8-b16c-ac13ae52f9d8&filters={%22tozeret_nm%22:%22${data.result.records[0].tozeret_nm}%22}`;
       fetch(dgamimAPI)
-        .then(response => response.json())
-        .then(data => {
+        .then((response) => response.json())
+        .then((data) => {
           const selectManuf = document.querySelector(".select-manufactor");
           selectManuf.value = data.result.records[0].tozar;
           selectManuf.onchange();
-
-        })
+        });
     })
-    .catch(error => {
-      container.innerHTML = 'מספר לא קיים או תקלה אחרת';
+    .catch((error) => {
+      container.innerHTML = "מספר לא קיים או תקלה אחרת";
 
-      console.error('Error:', error);
+      console.error("Error:", error);
     });
 }
-
