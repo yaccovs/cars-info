@@ -15,7 +15,11 @@ title: דף הבית
 
 <body dir="rtl">
     <div class="center">
-    <div class="header"></div>
+    <div class="header">
+        <h1>מידע טכני</h1>
+        <p>הוא כלי ביוזמה פרטית ואין לו שייכות רשמית לארגון כלשהו.
+            אין באמור נשיאת אחריות על כל נזק שיגרם אגב הסיוע או כתוצאה ממנו.</p>
+    </div>
     <div>
         <form class="form-checknumber" onsubmit="getDataForNumber(event)">
             לבדיקת דגם הרכב לפי מספר רישוי: <input type="text" placeholder="הכנס מספר רכב" id="input-checknumber"><button id="btn-checknumber">בדוק</button>
@@ -40,7 +44,8 @@ title: דף הבית
         <div class="details-info">
         </div>
     </div>
-
+<div class="footer">להערות ושליחת נתונים: יעקב שעיו נתיבות <a href="https://wa.me/972504642554">https://wa.me/972504642554</a>
+</div>
     <p>Last updated: {{ site.time | date: "%B %d, %Y" }}</p>
     <script src="main.js"></script>
 </div>
