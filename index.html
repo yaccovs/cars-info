@@ -15,42 +15,43 @@ title: דף הבית
 
 <body dir="rtl">
     <div class="center">
-    <div class="header">
-        <h1>מידע טכני</h1>
-    </div>
-    <div>
-        <form class="form-checknumber" onsubmit="getDataForNumber(event)">
-            לבדיקת דגם הרכב לפי מספר רישוי: <input type="text" placeholder="הכנס מספר רכב" id="input-checknumber"><button id="btn-checknumber">בדוק</button>
-        </form>
-    </div>
-    <div class="number-info"></div>
-    <div class="main">
-        <div class="container-selects-options">
-            <select name="select-manufactor" class="select-manufactor selects-options"
-                onchange="optionsFields[0].value=this.value; setSelectOptions(1)">
-                <option value="" disabled selected></option>
-            </select>
-            <select name="select-model" class="select-model selects-options"
-                onchange="optionsFields[1].value=this.value; setSelectOptions(2)">
-                <option value="" disabled selected></option>
-            </select>
-            <select name="select-year" class="select-year selects-options"
-                onchange="optionsFields[2].value=this.value; fillDetails()">
-                <option value="" disabled selected></option>
-            </select>
+        <div class="header">
+            <h1>מידע טכני</h1>
         </div>
-        <div class="details-info">
+        <div>
+            <form class="form-checknumber" onsubmit="getDataForNumber(event)">
+                לבדיקת דגם הרכב לפי מספר רישוי: <input type="text" placeholder="הכנס מספר רכב"
+                    id="input-checknumber"><button id="btn-checknumber">בדוק</button>
+            </form>
         </div>
+        <div class="number-info"></div>
+        <div class="main">
+            <div class="container-selects-options">
+                <select name="select-manufactor" class="select-manufactor selects-options"
+                    onchange="optionsFields[0].value=this.value; setSelectOptions(1)">
+                    <option value="" disabled selected></option>
+                </select>
+                <select name="select-model" class="select-model selects-options"
+                    onchange="optionsFields[1].value=this.value; setSelectOptions(2)">
+                    <option value="" disabled selected></option>
+                </select>
+                <select name="select-year" class="select-year selects-options"
+                    onchange="optionsFields[2].value=this.value; fillDetails()">
+                    <option value="" disabled selected></option>
+                </select>
+            </div>
+            <div class="details-info">
+            </div>
+        </div>
+        <p>Last updated: {{ site.time | date: "%B %d, %Y" }}</p>
     </div>
-    <p>Last updated: {{ site.time | date: "%B %d, %Y" }}</p>
-    <script src="main.js"></script>
-</div>
-<div class="footer">
-    <p>מידע טכני הוא כלי ביוזמה פרטית ואין לו שייכות רשמית לארגון כלשהו.
-        אין באמור נשיאת אחריות על כל נזק שיגרם אגב הסיוע או כתוצאה ממנו.</p>
+    <div class="footer">
+        <p>מידע טכני הוא כלי ביוזמה פרטית ואין לו שייכות רשמית לארגון כלשהו.
+            אין באמור נשיאת אחריות על כל נזק שיגרם אגב הסיוע או כתוצאה ממנו.</p>
 
-    להערות ושליחת נתונים: יעקב שעיו נתיבות <a href="https://wa.me/972504642554">https://wa.me/972504642554</a>
-</div>
+        להערות ושליחת נתונים: יעקב שעיו נתיבות <a href="https://wa.me/972504642554">https://wa.me/972504642554</a>
+    </div>
+    <script src="main.js"></script>
 </body>
 
 </html>

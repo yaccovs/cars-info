@@ -72,10 +72,10 @@ html {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 1em; /* גובה הפוטר */
+  height: 5em; /* גובה הפוטר */
   background-color: #dbdbdb;
   color: rgb(0, 0, 0);
   text-align: center;
-  line-height: 5em; /* מרכז טקסט אנכית */
+  line-height: 1em; /* מרכז טקסט אנכית */
   z-index: 1000; /* מבטיח שהוא יישב מעל תוכן אחר */
 }
