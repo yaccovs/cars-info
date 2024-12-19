@@ -59,7 +59,7 @@ async function renderMarkdown() {
   }
 }
 
-let dataFromJSON, sortInfoJSON, dataFromCSV;
+let dataCars, sortInfoJSON, dataFromCSV;
 const markdownFile = "./README.md";
 // renderMarkdown();
 
@@ -70,7 +70,7 @@ const markdownFile = "./README.md";
   staticData();
   try {
     const data = await fetchCSVToObject(url);
-    dataFromJSON = data;
+    dataCars = data;
     console.log(data);
     start();
   } catch (error) {
@@ -94,7 +94,7 @@ async function staticData() {
   const url = "./data_cars.csv";
   try {
     const data = await fetchCSVToObject(url);
-    dataFromJSON = data;
+    dataCars = data;
     console.log(data);
     start();
   } catch (error) {
@@ -155,7 +155,7 @@ async function start() {
   const prevYearValue = selectYear.value;
 
   const uniqs = new Set();
-  dataFromJSON.forEach((obj) => uniqs.add(obj[optionsFields[0].fieldKeyJSON]));
+  dataCars.forEach((obj) => uniqs.add(obj[optionsFields[0].fieldKeyJSON]));
   optionsFields[0].options = [...uniqs].sort();
 
   fillSelect(0);
@@ -198,19 +198,30 @@ async function setSelectOptions(fieldNum) {
   }
 
   const uniqs = new Set();
-  const carFilter = dataFromJSON.filter(filterBySelects);
+  const carFilter = dataCars.filter(filterBySelects);
   carFilter.forEach((obj) =>
     uniqs.add(obj[optionsFields[fieldNum].fieldKeyJSON])
   );
   optionsFields[fieldNum].options = [...uniqs].sort();
 
   fillSelect(fieldNum);
+  console.dir(optionsFields[fieldNum]);
+  if (
+    optionsFields[fieldNum].options.length === 1 &&
+    (optionsFields[fieldNum].value === null ||
+      typeof optionsFields[fieldNum].value === "undefined")
+  ) {
+    const value = optionsFields[fieldNum].options[0];
+    optionsFields[fieldNum].value = value;
+    document.querySelector(`.${optionsFields[fieldNum].field}`).value = value;
+    document.querySelector(`.${optionsFields[fieldNum].field}`).onchange();
+  }
 }
 
 async function fillDetails() {
   let container = clearContainerDetails();
 
-  const info = dataFromJSON.find(filterBySelects);
+  const info = dataCars.find(filterBySelects);
 
   infoKeys = Object.keys(info);
   try {
@@ -292,6 +303,22 @@ const youtubeHtml = `<div class="youtube-container">
     </iframe>
 </div>`;
 
+async function getInfoFromGovAPI(resource_id, mispar_rechev) {
+  const url = `https://data.gov.il/api/3/action/datastore_search?resource_id=${resource_id}&filters={%22mispar_rechev%22:%22${mispar_rechev}%22}`;
+  try {
+    caches.delete(url);
+  } catch (error) {
+    console.log("Error delete cache:", error);
+  }
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
 function getDataForNumber(event) {
   event.preventDefault();
 
@@ -304,35 +331,109 @@ function getDataForNumber(event) {
     sug_delek_nm: "סוג דלק",
   };
   const container = document.querySelector(".number-info");
-  container.innerHTML = '<div class="spinner"></div>';
+  container.innerHTML = `<table><thead><tr><th>
+  רכב פרטי/מסחרי
+  </th></tr></thead>
+  <tbody>
+  <tr><td><div class="spinner"></div></td></tr></tbody></table>`;
   const mispar_rechev = document.querySelector("#input-checknumber").value;
-  const NumbersAPI = `https://data.gov.il/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&filters={%22mispar_rechev%22:%22${mispar_rechev}%22}`;
-  fetch(NumbersAPI)
-    .then((response) => response.json())
+  getInfoFromGovAPI("053cea08-09bc-40ec-8f7a-156f0677aff3", mispar_rechev)
     .then((data) => {
-      const innerTable = `${Object.keys(keys)
-        .map(
-          (key) =>
-            `<tr><td>${keys[key]}</td><td>${data.result.records[0][key]}</td></tr>`
-        )
-        .join("\n")}`;
-      container.innerHTML = `<table>
-          ${innerTable}
-          <tfoot><tr>
-          <td class="disclaimer-gov" colspan="2">הנתונים נלקחו מ<a href="https://data.gov.il/dataset/private-and-commercial-vehicles">DataGov</a></td>
-          </tr></tfoot>`;
-      const dgamimAPI = `https://data.gov.il/api/3/action/datastore_search?resource_id=d00812f4-58c5-4ce8-b16c-ac13ae52f9d8&filters={%22tozeret_nm%22:%22${data.result.records[0].tozeret_nm}%22}`;
-      fetch(dgamimAPI)
-        .then((response) => response.json())
-        .then((data) => {
-          const selectManuf = document.querySelector(".select-manufactor");
-          selectManuf.value = data.result.records[0].tozar;
-          selectManuf.onchange();
-        });
+      insertNumberDataToTable(data);
     })
     .catch((error) => {
-      container.innerHTML = "מספר לא קיים או תקלה אחרת";
+      getInfoFromGovAPI("053cea08-09bc-40ec-8f7a-156f0677aff3", mispar_rechev)
+        .then((data) => {
+          insertNumberDataToTable(data);
+        })
+        .catch((error) => {
+          getInfoFromGovAPI(
+            "cf29862d-ca25-4691-84f6-1be60dcb4a1e",
+            mispar_rechev
+          )
+            .then((data) => {
+              insertNumberDataToTable(data, "רכב ציבורי");
+            })
+            .catch((error) => {
+              getInfoFromGovAPI(
+                "bf9df4e2-d90d-4c0a-a400-19e15af8e95f",
+                mispar_rechev
+              )
+                .then((data) => {
+                  insertNumberDataToTable(data, "אופנוע");
+                })
+                .catch(() => {
+                  getInfoFromGovAPI(
+                    "6f6acd03-f351-4a8f-8ecf-df792f4f573a",
+                    mispar_rechev
+                  )
+                    .then((data) => {
+                      insertNumberDataToTable(data, "רכב בסטטוס ביטול סופי");
+                    })
+                    .catch(() => {
+                      getInfoFromGovAPI(
+                        "f6efe89a-fb3d-43a4-bb61-9bf12a9b9099",
+                        mispar_rechev
+                      )
+                        .then((data) => {
+                          insertNumberDataToTable(data, "רכב בסטטוס לא פעיל");
+                        })
+                        .catch(() => {
+                          getInfoFromGovAPI(
+                            "6f6acd03-f351-4a8f-8ecf-df792f4f573a",
+                            mispar_rechev
+                          )
+                            .then((data) => {
+                              insertNumberDataToTable(
+                                data,
+                                "רכב בסטטוס לא פעיל"
+                              );
+                            })
+                            .catch((error) => {
+                              container.innerHTML = "מספר לא קיים או תקלה אחרת";
+                              console.error("Error:", error);
+                            });
+                        });
+                    });
+                });
+            });
+        });
 
       console.error("Error:", error);
     });
+
+  function insertNumberDataToTable(data, title = "רכב פרטי/מסחרי") {
+    container.innerHTML = `<table><thead><tr><th>
+    ${title}
+    </th></tr></thead>
+    <tbody>
+    <tr><td><div class="spinner"></div></td></tr></tbody></table>`;
+    const innerTable = `${Object.keys(keys)
+      .filter(
+        (key) =>
+          data.result.records[0][key] !== null &&
+          typeof data.result.records[0][key] !== "undefined"
+      )
+      .map(
+        (key) =>
+          `<tr><td>${keys[key]}</td><td>${data.result.records[0][key]}</td></tr>`
+      )
+      .join("\n")}`;
+    container.innerHTML = `<table>
+          <thead><tr><th colspan="2">${title}</th></tr></thead>
+          <tbody>
+          ${innerTable}
+          </tbody>
+          <tfoot><tr>
+          <td class="disclaimer-gov" colspan="2">הנתונים נלקחו מ<a href="https://data.gov.il/organization/ministry_of_transport">DataGov</a></td>
+          </tr></tfoot>`;
+    const dgamimAPI = `https://data.gov.il/api/3/action/datastore_search?resource_id=d00812f4-58c5-4ce8-b16c-ac13ae52f9d8&filters={%22tozeret_nm%22:%22${data.result.records[0].tozeret_nm}%22}`;
+    fetch(dgamimAPI)
+      .then((response) => response.json())
+      .then((data) => {
+        const selectManuf = document.querySelector(".select-manufactor");
+        selectManuf.value = data.result.records[0].tozar;
+        selectManuf.onchange();
+      });
+  }
 }

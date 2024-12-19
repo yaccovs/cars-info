@@ -110,3 +110,7 @@ html {
   font-size: xx-small;
   text-align: center;
 }
+
+table,td {
+  border: black 1px solid;
+}
