@@ -38,30 +38,7 @@ async function fetchCSVToObject(url) {
   }
 }
 
-async function renderMarkdown() {
-  try {
-    // טען את קובץ ה-MD
-    const response = await fetch(markdownFile);
-    if (!response.ok) {
-      throw new Error("Failed to fetch the Markdown file");
-    }
-
-    // קרא את תוכן הקובץ כטקסט
-    const markdown = await response.text();
-
-    // המרת Markdown ל-HTML באמצעות marked.js
-    const html = marked.marked(markdown);
-
-    // הצגת ה-HTML בתוך העמוד
-    document.querySelector(".header").innerHTML = html;
-  } catch (error) {
-    console.error("Error:", error);
-  }
-}
-
 let dataCars, sortInfoJSON, dataFromCSV;
-const markdownFile = "./README.md";
-// renderMarkdown();
 
 (async () => {
   const url =
@@ -71,8 +48,8 @@ const markdownFile = "./README.md";
   try {
     const data = await fetchCSVToObject(url);
     dataCars = data;
-    console.log(data);
     start();
+    updateInputsFromURL();
   } catch (error) {
     console.error("Failed to process CSV:", error);
   }
@@ -208,8 +185,8 @@ async function setSelectOptions(fieldNum) {
   console.dir(optionsFields[fieldNum]);
   if (
     optionsFields[fieldNum].options.length === 1 &&
-    (optionsFields[fieldNum].value === null ||
-      typeof optionsFields[fieldNum].value === "undefined")
+    (optionsFields[fieldNum].options[0] === null ||
+      typeof optionsFields[fieldNum].options[0] === "undefined")
   ) {
     const value = optionsFields[fieldNum].options[0];
     optionsFields[fieldNum].value = value;
@@ -220,10 +197,13 @@ async function setSelectOptions(fieldNum) {
 
 async function fillDetails() {
   let container = clearContainerDetails();
+  if (!fromURL) {
+    updateURLFromInputs();
+  }
 
   const info = dataCars.find(filterBySelects);
 
-  infoKeys = Object.keys(info);
+  const infoKeys = Object.keys(info);
   try {
     infoKeys.sort((a, b) => sortInfoJSON[b] - sortInfoJSON[a]);
   } catch (error) {
@@ -436,4 +416,47 @@ function getDataForNumber(event) {
         selectManuf.onchange();
       });
   }
+}
+
+let fromURL = false;
+
+function updateInputsFromURL() {
+  fromURL = true;
+  const url = new URL(window.location);
+  const model = url.searchParams.get("model");
+  const manufactor = url.searchParams.get("manufactor");
+  const year = url.searchParams.get("year");
+  if (manufactor && model && year) {
+    setSelectOptions(0);
+    optionsFields[0].value = manufactor;
+    document.querySelector(".select-manufactor").value = manufactor;
+    setSelectOptions(1);
+    optionsFields[1].value = model;
+    document.querySelector(".select-model").value = model;
+    setSelectOptions(2);
+    optionsFields[2].value = year;
+    document.querySelector(".select-year").value = year;
+  }
+  fromURL = false;
+}
+
+addEventListener('popstate', (event) => {
+  updateInputsFromURL();
+});
+
+function updateURLFromInputs() {
+  const model = document.querySelector(".select-model").value;
+  const manufactor = document.querySelector(".select-manufactor").value;
+  const year = document.querySelector(".select-year").value;
+
+  // מעדכן את הכתובת
+  updateURL({ model, manufactor, year });
+}
+
+function updateURL({ model, manufactor, year }) {
+  const url = new URL(window.location);
+  url.searchParams.set("model", model);
+  url.searchParams.set("manufactor", manufactor);
+  url.searchParams.set("year", year);
+  window.history.pushState({}, "", url);
 }
