@@ -423,38 +423,32 @@ let fromURL = false;
 function updateInputsFromURL() {
   fromURL = true;
   const url = new URL(window.location);
-  const model = url.searchParams.get("model");
-  const manufactor = url.searchParams.get("manufactor");
-  const year = url.searchParams.get("year");
-  if (manufactor && model && year) {
-    setSelectOptions(0);
-    optionsFields[0].value = manufactor;
-    document.querySelector(".select-manufactor").value = manufactor;
-    setSelectOptions(1);
-    optionsFields[1].value = model;
-    document.querySelector(".select-model").value = model;
-    setSelectOptions(2);
-    optionsFields[2].value = year;
-    document.querySelector(".select-year").value = year;
-  }
+
+  optionsFields.forEach((optField, index) => {
+    setSelectOptions(index);
+    optField.value = url.searchParams.get(optField.fieldUrlServer);
+    document.querySelector(`.${optField.field}`).value = optField.value;
+  });
+  fillDetails();
   fromURL = false;
 }
 
-addEventListener('popstate', (event) => {
+addEventListener("popstate", (event) => {
   updateInputsFromURL();
 });
 
 function updateURLFromInputs() {
-  const model = document.querySelector(".select-model").value;
-  const manufactor = document.querySelector(".select-manufactor").value;
-  const year = document.querySelector(".select-year").value;
+  const url = new URL(window.location);
 
-  // מעדכן את הכתובת
-  updateURL({ model, manufactor, year });
+  optionsFields.forEach((optField, index) => {
+    console.dir(optField);
+    optField.value = document.querySelector(`.${optField.field}`).value;
+    url.searchParams.set(optField.fieldUrlServer, optField.value);
+  });
+  window.history.pushState({}, "", url);
 }
 
 function updateURL({ model, manufactor, year }) {
-  const url = new URL(window.location);
   url.searchParams.set("model", model);
   url.searchParams.set("manufactor", manufactor);
   url.searchParams.set("year", year);
