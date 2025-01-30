@@ -477,3 +477,122 @@ function updateURL({ model, manufactor, year }) {
   url.searchParams.set("year", year);
   window.history.pushState({}, "", url);
 }
+
+
+
+
+
+/**** טיפול בתקלות */
+
+/* הפונקציה מקבלת כתובת URL של קובץ CSV ומחזירה אובייקט עם הנתונים של התקלות מהגוגל שיטס - מעודכן */
+(async () => {
+  const url =
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vSXNnGEJ2aU0SK1e-AGNsT4z6TqeQQkg_d6d4N1ROfyJ0JTHuoLjNZ4UVqaAKj999A8ymOGoCczDvx3/pub?gid=385149699&single=true&output=csv";
+  staticData();
+  try {
+    const data = await fetchCSVToObject(url);
+    problemsData = data;
+    setSelectOptionsFromData_problems();
+    updateInputsFromURL();
+  } catch (error) {
+    console.error("Failed to process CSV:", error);
+  }
+})();
+
+let problemsData;
+
+let optionsFields_problems = [
+  {
+    field: "select-problem",
+    fieldUrlServer: "prblm",
+    fieldKeyJSON: "סוג תקלה",
+    value: undefined,
+    options: [],
+  },
+];
+
+async function setSelectOptionsFromData_problems() {
+  const selectProblem = document.querySelector(".select-problem");
+  const prevProblemValue = selectProblem.value;
+
+  const uniqs = new Set();
+  problemsData.forEach((obj) => uniqs.add(obj[optionsFields_problems[0].fieldKeyJSON]));
+  optionsFields_problems[0].options = [...uniqs].sort();
+
+  fillSelect_problems(0);
+  if (prevProblemValue !== "") {
+    selectProblem.value = prevProblemValue;
+    selectProblem.onchange();
+  }
+}
+
+function fillSelect_problems(fieldNum) {
+  const options = optionsFields_problems[fieldNum].options;
+  const field = optionsFields_problems[fieldNum].field;
+  let container = document.querySelector(`.${field}`);
+  container.classList.add("not-select");
+  container.innerHTML = `<option value="" disabled selected>== ${optionsFields_problems[fieldNum].fieldKeyJSON} ==</option>`;
+  options.forEach((option) => {
+    let tag_option = document.createElement("option");
+    tag_option.value = option;
+    tag_option.textContent = option;
+    container.appendChild(tag_option);
+  });
+}
+
+
+function fillDetails_problems () {
+  let container = clearContainerDetails();
+  // if (!fromURL) {
+  //   updateURLFromInputs();
+  // }
+
+  const info = problemsData.filter(filterBySelects_problems);
+
+  const infoKeys = Object.keys(info);
+
+  hiddenKeys = optionsFields_problems.map((opt) => opt.fieldKeyJSON);
+  infoKeys
+    .filter(
+      (key) =>
+        !hiddenKeys.includes(key) &&
+        info[key] &&
+        (typeof info[key] !== "object" || info[key][Object.keys(info[key])[0]])
+    )
+    .forEach((key) => {
+      const value = info[key];
+
+      let div = document.createElement("div");
+      let internalDiv = document.createElement("div");
+      if (typeof value === "object") {
+        const valueKeys = Object.keys(value);
+        for (let i = 0; i < valueKeys.length; i++) {
+          const valueKey = valueKeys[i];
+          let h4 = document.createElement("h4");
+          let internalDiv = document.createElement("div");
+          h4.innerText = valueKey;
+          internalDiv.innerText = value[valueKey];
+          div.appendChild(h4);
+          div.appendChild(internalDiv);
+        }
+      } else {
+        internalDiv.innerText = value;
+        div.appendChild(internalDiv);
+      }
+      div.innerHTML = div.innerHTML.replace(
+        /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?/g,
+        (url, id) => {
+          return format(youtubeHtml, id);
+        }
+      );
+      container.appendChild(div);
+    });
+}
+
+const filterBySelects_problems = (obj) => {
+  if (typeof optionsFields_problems[0].value === "undefined") return true;
+      return (
+        String(obj[optionsFields_problems[0].fieldKeyJSON]) ===
+        String(optionsFields_problems[0].value)
+      );
+};
