@@ -450,7 +450,7 @@ function updateInputsFromURL() {
       document.querySelector(`.${optField.field}`).value = optField.value;
     }
   });
-  if (optField.value !== null) {
+  if (optionsFields[2].value) {
     fillDetails();
   }
   fromURL = false;
