@@ -40,6 +40,21 @@ async function fetchCSVToObject(url) {
 
 let dataCars, sortInfoJSON, dataFromCSV;
 
+/* הפונקציה מקבלת כתובת URL של קובץ CSV ומחזירה אובייקט עם הנתונים של הרכבים - מהיר יותר אבל לא מעודכן*/
+async function staticData() {
+  const url = "./data_cars.csv";
+  try {
+    const data = await fetchCSVToObject(url);
+    dataCars = data;
+    console.log(data);
+    setSelectOptionsFromData();
+    updateInputsFromURL();
+  } catch (error) {
+    console.error("Failed to process CSV:", error);
+  }
+}
+
+/* הפונקציה מקבלת כתובת URL של קובץ CSV ומחזירה אובייקט עם הנתונים של הרכבים מהגוגל שיטס - מעודכן */
 (async () => {
   const url =
     "https://docs.google.com/spreadsheets/d/e/2PACX-1vSXNnGEJ2aU0SK1e-AGNsT4z6TqeQQkg_d6d4N1ROfyJ0JTHuoLjNZ4UVqaAKj999A8ymOGoCczDvx3/pub?gid=1587105429&single=true&output=csv";
@@ -48,13 +63,14 @@ let dataCars, sortInfoJSON, dataFromCSV;
   try {
     const data = await fetchCSVToObject(url);
     dataCars = data;
-    start();
+    setSelectOptionsFromData();
     updateInputsFromURL();
   } catch (error) {
     console.error("Failed to process CSV:", error);
   }
 })();
 
+/* הפונקציה מקבלת כתובת URL של קובץ CSV ומחזירה אובייקט עם הנתונים של זמן העדכון האחרון */
 (async () => {
   const url =
     "https://docs.google.com/spreadsheets/d/e/2PACX-1vSXNnGEJ2aU0SK1e-AGNsT4z6TqeQQkg_d6d4N1ROfyJ0JTHuoLjNZ4UVqaAKj999A8ymOGoCczDvx3/pub?gid=934567918&single=true&output=csv";
@@ -66,18 +82,6 @@ let dataCars, sortInfoJSON, dataFromCSV;
     console.error("Failed to process CSV:", error);
   }
 })();
-
-async function staticData() {
-  const url = "./data_cars.csv";
-  try {
-    const data = await fetchCSVToObject(url);
-    dataCars = data;
-    console.log(data);
-    start();
-  } catch (error) {
-    console.error("Failed to process CSV:", error);
-  }
-}
 
 fetch("./sort.json")
   .then((response) => response.json())
@@ -123,7 +127,7 @@ const filterBySelects = (obj) => {
   }
 };
 
-async function start() {
+async function setSelectOptionsFromData() {
   const selectManufactor = document.querySelector(".select-manufactor");
   const prevManufactorValue = selectManufactor.value;
   const selectModel = document.querySelector(".select-model");
@@ -165,6 +169,15 @@ function fillSelect(fieldNum) {
 }
 
 async function setSelectOptions(fieldNum) {
+  if (
+    fieldNum > 0 &&
+    (optionsFields[fieldNum - 1].value === undefined ||
+      optionsFields[fieldNum - 1].value === "" ||
+      optionsFields[fieldNum - 1].value === null)
+  ) {
+    return;
+  }
+
   clearContainerDetails();
   for (let i = fieldNum; i < optionsFields.length; i++) {
     const optionsField = optionsFields[i];
@@ -173,6 +186,11 @@ async function setSelectOptions(fieldNum) {
     fieldToDef.innerHTML = `<option value="" disabled selected>== ${optionsFields[i].fieldKeyJSON} ==</option>`;
     fieldToDef.classList.add("not-select");
   }
+
+  const selectElement = document.querySelector(
+    `.${optionsFields[fieldNum].field}`
+  );
+  selectElement.disabled = false;
 
   const uniqs = new Set();
   const carFilter = dataCars.filter(filterBySelects);
@@ -190,8 +208,8 @@ async function setSelectOptions(fieldNum) {
   ) {
     const value = optionsFields[fieldNum].options[0];
     optionsFields[fieldNum].value = value;
-    document.querySelector(`.${optionsFields[fieldNum].field}`).value = value;
-    document.querySelector(`.${optionsFields[fieldNum].field}`).onchange();
+    selectElement.value = value;
+    selectElement.onchange();
   }
 }
 
@@ -420,6 +438,7 @@ function getDataForNumber(event) {
 
 let fromURL = false;
 
+/* הפונקציה משמשת לעדכון השדות על פי כתובת הURL */
 function updateInputsFromURL() {
   fromURL = true;
   const url = new URL(window.location);
@@ -427,9 +446,13 @@ function updateInputsFromURL() {
   optionsFields.forEach((optField, index) => {
     setSelectOptions(index);
     optField.value = url.searchParams.get(optField.fieldUrlServer);
-    document.querySelector(`.${optField.field}`).value = optField.value;
+    if (optField.value !== null) {
+      document.querySelector(`.${optField.field}`).value = optField.value;
+    }
   });
-  fillDetails();
+  if (optField.value !== null) {
+    fillDetails();
+  }
   fromURL = false;
 }
 

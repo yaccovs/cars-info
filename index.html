@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>מידע טכני - כלי רכב</title>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 
 <body dir="rtl">
@@ -29,11 +28,11 @@
                     <option value="" disabled selected></option>
                 </select>
                 <select name="select-model" class="select-model selects-options"
-                    onchange="optionsFields[1].value=this.value; setSelectOptions(2)">
+                    onchange="optionsFields[1].value=this.value; setSelectOptions(2)" disabled>
                     <option value="" disabled selected></option>
                 </select>
                 <select name="select-year" class="select-year selects-options"
-                    onchange="optionsFields[2].value=this.value; fillDetails()">
+                    onchange="optionsFields[2].value=this.value; fillDetails()" disabled>
                     <option value="" disabled selected></option>
                 </select>
             </div>
