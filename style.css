@@ -12,7 +12,7 @@ html {
 
 .details-info {
   display: flex;
-  flex-flow: column-reverse wrap-reverse;
+  flex-flow: column wrap-reverse;
 }
 
 .details-info > div {
